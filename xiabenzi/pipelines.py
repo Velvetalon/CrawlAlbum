@@ -38,16 +38,23 @@ class XiabenziPipeline(ImagesPipeline):
         return self.path_template.format(album_keyword,album_name,index)
 
 class log_pipeline(object) :
+    log_template = "画集名称：{0} - 已下载{1}页 - 来自关键字：<{2}>"
     def __init__(self):
         #初始化日志模块。
-        logging.basicConfig(level=logging.DEBUG,  # 控制台打印的日志级别
-                            filename='./download_log_{0}.log'.format(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))),
-                            filemode='w',
-                            format=
-                            '%(asctime)s : %(message)s')
+        self.logger = logging.getLogger("Download_log")
+
+        formatter = logging.Formatter('%(asctime)s : %(message)s')        #按照启动时间生成日志文件。
+        if not os.path.exists(".\\log") :
+            os.mkdir(".\\log")
+        log_name = re.sub('[:*?"<>|]'," ",".\\log\\download_log_{0}.log".format(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))))
+        file_handler = logging.FileHandler(log_name,
+                                           mode="w+")
+        file_handler.setFormatter(formatter)  # 可以通过setFormatter指定输出格式
+
+        self.logger.addHandler(file_handler)
+        self.logger.setLevel(logging.INFO)
     def process_item(self,item,spider):
-        log_template = "画集名称：{0} - 已下载{1}页 - 来自关键字：<{2}>"
-        logging.info(msg=log_template.format(item["album_name"],
+        self.logger.info(msg=self.log_template.format(item["album_name"],
                                          item["index"]-1,
                                          item["key_word"].replace("%20"," ")))
         return item

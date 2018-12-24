@@ -21,14 +21,14 @@ class getImage(scrapy.Spider):
     #默认关键字。
     default_key_word = {
         # 作品名称
-        "parodies":
-            ["Azur Lane", "Girls Frontline", "granblue fantasy", ],
-        # 人物名称
-        "characters":
-            ["illustrious", "belfast", "prinz eugen", ],
-        # 任意关键字
         "keyword":
-            ["bondage", ],
+            ["azur lane chinese", "girls frontline chinese"],
+        # 人物名称
+        # "characters":
+        #     ["illustrious", "belfast", "prinz eugen", ],
+        # 任意关键字
+        # "parodies":
+        #     ["azur lane", "girls frontline"],
     }
 
     #读取关键字配置。
