@@ -29,6 +29,9 @@ class getImage(scrapy.Spider):
         # 任意关键字
         # "parodies":
         #     ["azur lane", "girls frontline"],
+        #仅中文
+        "chineseOnly" :
+            True,
     }
 
     #读取关键字配置。
@@ -42,6 +45,13 @@ class getImage(scrapy.Spider):
 
         with open(self.key_word_path, "r") as fp:
             conf = yaml.load(fp.read())
+        if conf.get("chineseOnly","反正这里没人看所以随便写点什么都可以啦O(∩_∩)O~~~") \
+                != "反正这里没人看所以随便写点什么都可以啦O(∩_∩)O~~~" :
+            self.chineseOnly = conf["chineseOnly"]
+            del conf["chineseOnly"]
+        else :
+            self.chineseOnly = True
+
         #生成搜索链接。
         for key in conf.keys() :
             for keyword in conf[key] :
@@ -50,7 +60,7 @@ class getImage(scrapy.Spider):
     #爬取方法
     def start_requests(self):  # 由此方法通过下面链接爬取页面
         self.read_keyword()
-        #self.urls = ["https://www.voicehentai.com/page.php?id=4bf283e2-2d29-11e8-a98a-52540037eb09&part=6"]
+        #self.urls = ["https://www.voicehentai.com/page.php?id=276c53f3-9e51-11e8-b13c-52540037eb09&part=4"]
         for url in self.urls:
             #初始化item
             item = getInitItem()
@@ -74,6 +84,11 @@ class getImage(scrapy.Spider):
             tag_list = soup.findAll(class_ = "col-sm-3 col-md-3 col-xs-6 product product_wd")
             #对于每一个画集都应该使用一个新的item。
             for tag in tag_list :
+                if self.chineseOnly :
+                    tptag = tag.find(class_="product-info")
+                    if  "chinese" not in tptag.img["src"] :
+                        continue
+
                 new_item = getInitItem()
                 # 保存关键字。
                 new_item["key_word"] = response.url.split("=")[-1]

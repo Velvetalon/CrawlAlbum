@@ -1,1 +1,2 @@
-keyword: [azur lane chinese, girls frontline chinese]
+characters: ["jeanne darc",]
+chineseOnly: True
